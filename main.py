@@ -6,12 +6,11 @@ import numpy as np
 
 app = Ursina(borderless=False, fullscreen=False, development_mode=True, editor_ui_enabled=True)
 
-sky = Sky(color="#000000")  # Certifique-se de que o céu é uma entidade independente
+sky = Sky(color="#000000")  
 PointLight()
 
 t = -np.pi
 
-# Define o Sol com 'collider' e 'info'
 sun = Entity(
     name='Sol',
     model='sphere',
@@ -23,17 +22,14 @@ sun = Entity(
         "É uma esfera quase perfeita de plasma quente, gerando energia através de fusão nuclear de hidrogênio em hélio em seu núcleo. "
         "Essa energia é essencial para a vida na Terra, fornecendo luz e calor."
     ),
-    color=color.white,  # Certifica-se de que a cor não afeta a textura
+    color=color.white, 
     shader=lit_with_shadows_shader
 )
 
-# Lista para armazenar os corpos celestes (planetas e o Sol)
 celestial_bodies = []
 
-# Adiciona o Sol à lista
 celestial_bodies.append(sun)
 
-# Função para criar planetas
 def create_planet(name, scale, texture, info):
     return Entity(
         name=name,
@@ -42,11 +38,10 @@ def create_planet(name, scale, texture, info):
         texture=texture,
         collider='sphere',
         info=info,
-        color=color.white,  # Certifica-se de que a cor não afeta a textura
+        color=color.white, 
         shader=lit_with_shadows_shader
     )
 
-# Define os planetas e adiciona-os à lista
 mercury = create_planet(
     name='Mercúrio',
     scale=0.2,
@@ -142,7 +137,6 @@ celestial_bodies.append(neptune)
 title_font = "fonts/ChakraPetch-Bold.ttf"
 body_font = "fonts/ChakraPetch-Regular.ttf"
 
-# Crie uma entidade de texto para exibir informações
 info_text = Text(
     text='',
     position=window.top_left + Vec2(0.02, -0.08),
@@ -163,7 +157,6 @@ title_text = Text(
     font=title_font
 )
 
-# Adiciona textos auxiliares na parte inferior da tela
 helper_text = Text(
     text='Use W, A, S, D para mover a câmera | Use Q para descer e E para subir a câmera | Clique esquerdo para selecionar um astro | Clique direito para mover o ângulo da câmera | Z para visão de cima | ESC para retornar',
     position=window.bottom_left + Vec2(0, 0.02),
@@ -174,18 +167,14 @@ helper_text = Text(
     font=body_font
 )
 
-# Variável para rastrear o corpo selecionado
 selected_body = None
 
-# Variáveis para controle da câmera livre
 free_camera_speed = 5
 camera_rotation_speed = 100
 
-# Defina a posição e a rotação iniciais da câmera
-initial_camera_position = Vec3(0, 10, -20)  # Ajuste conforme necessário
-initial_camera_rotation = Vec3(15, 0, 0)    # Ajuste conforme necessário
+initial_camera_position = Vec3(0, 10, -20) 
+initial_camera_rotation = Vec3(15, 0, 0)   
 
-# Configure a câmera para a posição inicial
 camera.position = initial_camera_position
 camera.rotation = initial_camera_rotation
 camera.look_at(sun.position)
@@ -208,12 +197,11 @@ def update():
 
     if selected_body:
         # Atualiza a posição da câmera para manter o corpo selecionado no centro
-        distance = selected_body.scale_y * 5  # Ajuste conforme necessário
+        distance = selected_body.scale_y * 5  
         dir_vector = (camera.position - selected_body.position).normalized()
         camera.position = selected_body.position + dir_vector * distance
         camera.look_at(selected_body.position)
 
-        # Exibe as informações do corpo selecionado
         title_text.text = f"{selected_body.name}"
         info_text.text = f"{selected_body.info}"
         info_text.wordwrap=40
@@ -239,7 +227,6 @@ def update():
             # Limita a rotação vertical para evitar capotamento
             camera.rotation_x = max(min(camera.rotation_x, 90), -90)
 
-        # Limpa o texto quando nenhum astro está selecionado
         info_text.text = ''
         title_text.text = ''
 
@@ -260,15 +247,13 @@ def input(key):
         camera.look_at(sun.position)
 
     elif key == 'escape':
-        # Retorna ao modo de câmera livre e redefine a posição inicial
         selected_body = None
         reset_planet_infomation()
         camera.look_at(sun.position)
         
 
 def focus_on_body(body):
-    # Define a posição da câmera para focar no corpo selecionado
-    distance = body.scale_y * 5  # Ajuste conforme necessário
+    distance = body.scale_y * 5  
     if body != sun:
         dir_vector = (body.position - sun.position).normalized()
     else:
