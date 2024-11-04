@@ -1,10 +1,13 @@
 from ursina import Ursina, Entity, color, time, held_keys, camera, mouse, Text, window, Vec2, Vec3
+from ursina.shaders import lit_with_shadows_shader
+from ursina.lights import PointLight
 from ursina.prefabs.sky import Sky
 import numpy as np
 
 app = Ursina(borderless=False, fullscreen=False, development_mode=True, editor_ui_enabled=True)
 
 sky = Sky(color="#000000")  # Certifique-se de que o céu é uma entidade independente
+PointLight()
 
 t = -np.pi
 
@@ -20,7 +23,8 @@ sun = Entity(
         "É uma esfera quase perfeita de plasma quente, gerando energia através de fusão nuclear de hidrogênio em hélio em seu núcleo. "
         "Essa energia é essencial para a vida na Terra, fornecendo luz e calor."
     ),
-    color=color.white  # Certifica-se de que a cor não afeta a textura
+    color=color.white,  # Certifica-se de que a cor não afeta a textura
+    shader=lit_with_shadows_shader
 )
 
 # Lista para armazenar os corpos celestes (planetas e o Sol)
@@ -38,7 +42,8 @@ def create_planet(name, scale, texture, info):
         texture=texture,
         collider='sphere',
         info=info,
-        color=color.white  # Certifica-se de que a cor não afeta a textura
+        color=color.white,  # Certifica-se de que a cor não afeta a textura
+        shader=lit_with_shadows_shader
     )
 
 # Define os planetas e adiciona-os à lista
@@ -160,7 +165,7 @@ title_text = Text(
 
 # Adiciona textos auxiliares na parte inferior da tela
 helper_text = Text(
-    text='Use W, A, S, D para mover a câmera | Use Q para descer e E para subir a câmera | Clique com o botão esquerdo para selecionar um astro | ESC para retornar',
+    text='Use W, A, S, D para mover a câmera | Use Q para descer e E para subir a câmera | Clique esquerdo para selecionar um astro | Clique direito para mover o ângulo da câmera | Z para visão de cima | ESC para retornar',
     position=window.bottom_left + Vec2(0, 0.02),
     origin=(-0.55, -0.5),
     color=color.white,
@@ -241,19 +246,25 @@ def update():
 def input(key):
     global selected_body
 
-    if selected_body is None:
-        if key == 'left mouse down':
-            if mouse.hovered_entity in celestial_bodies:
-                selected_body = mouse.hovered_entity
-                focus_on_body(selected_body)
+    
+    if key == 'left mouse down':
+        if mouse.hovered_entity in celestial_bodies:
+            reset_planet_infomation()
+            selected_body = mouse.hovered_entity
+            focus_on_body(selected_body)
+
+    if key == 'z':
+        selected_body = None
+        reset_planet_infomation()
+        camera.position = Vec3(0, 25, 0)
+        camera.look_at(sun.position)
+
     elif key == 'escape':
         # Retorna ao modo de câmera livre e redefine a posição inicial
         selected_body = None
-        camera.position = initial_camera_position
-        camera.rotation = initial_camera_rotation
+        reset_planet_infomation()
         camera.look_at(sun.position)
-        info_text.text = ''
-        title_text.text = ''
+        
 
 def focus_on_body(body):
     # Define a posição da câmera para focar no corpo selecionado
@@ -264,5 +275,12 @@ def focus_on_body(body):
         dir_vector = Vec3(0, 0, -1)
     camera.position = body.position + dir_vector * distance
     camera.look_at(body.position)
+
+def reset_planet_infomation():
+    camera.position = initial_camera_position
+    camera.rotation = initial_camera_rotation
+    info_text.text = ''
+    title_text.text = ''
+
 
 app.run()
