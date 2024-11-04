@@ -158,6 +158,16 @@ title_text = Text(
     font=title_font
 )
 
+# Adiciona textos auxiliares na parte inferior da tela
+helper_text = Text(
+    text='Use W, A, S, D para mover a câmera | Use Q para descer e E para subir a câmera | Clique com o botão esquerdo para selecionar um astro | ESC para retornar',
+    position=window.bottom_left + Vec2(0, 0.02),
+    origin=(-0.55, -0.5),
+    color=color.white,
+    background=True,
+    scale=0.6,
+    font=body_font
+)
 
 # Variável para rastrear o corpo selecionado
 selected_body = None
