@@ -111,6 +111,10 @@ saturn = create_planet(
 )
 celestial_bodies.append(saturn)
 
+ring = Entity(model='models/torus.obj', position=saturn.position, scale=0.4,
+        scale_y=0.05, shader=lit_with_shadows_shader, rotation_x=45,
+        color='#bfbdaf')
+
 uranus = create_planet(
     name='Urano',
     scale=0.5,
@@ -192,6 +196,7 @@ def update():
     mars.position = Vec3(np.cos(t + angle * 3) * 2.2, 0, np.sin(t + angle * 3) * 2.2)
     jupiter.position = Vec3(np.cos(t + angle * 4) * 2.6, 0, np.sin(t + angle * 4) * 2.6)
     saturn.position = Vec3(np.cos(t + angle * 5) * 3, 0, np.sin(t + angle * 5) * 3)
+    ring.position = Vec3(np.cos(t + angle * 5) * 3, 0, np.sin(t + angle * 5) * 3)
     uranus.position = Vec3(np.cos(t + angle * 6) * 3.4, 0, np.sin(t + angle * 6) * 3.4)
     neptune.position = Vec3(np.cos(t + angle * 7) * 3.8, 0, np.sin(t + angle * 7) * 3.8)
 
